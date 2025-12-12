@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Optics Ultimate Reviewer</title>
+    <style>
+        :root {
+            /* Physics Blue Theme */
+            --primary-color: #3498db;      /* Bright Blue */
+            --dark-color: #2c3e50;         /* Dark Blue/Grey */
+            --accent-color: #8e44ad;       /* Indigo/Purple for light/wave vibes */
+            --light-bg: #f0f8ff;           /* Alice Blue */
+            --white: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --wrong-red: #e74c3c;
+            --correct-green: #27ae60;
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            /* Gradient reminiscent of a spectrum or sky */
+            background: linear-gradient(135deg, #E0EAFC 0%, #CFDEF3 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-dark);
+            padding: 20px;
+        }
+
+        .app-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 800px;
+            height: 85vh; 
+            overflow-y: auto; 
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            -webkit-overflow-scrolling: touch; 
+        }
+
+        .app-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .app-container::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+        .app-container::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.1);
+            border-radius: 4px;
+        }
+
+        header {
+            padding: 20px 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(5px);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--dark-color);
+            font-weight: 700;
+        }
+
+        .live-stats {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-light);
+            display: none; 
+        }
+
+        .live-stats span {
+            color: var(--primary-color);
+            font-weight: 800;
+        }
+
+        .view {
+            padding: 30px;
+            flex: 1;
+            display: none;
+            flex-direction: column;
+            padding-bottom: 50px; 
+        }
+
+        .view.active {
+            display: flex;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .topic-btn {
+            background: var(--white);
+            border: none;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .topic-btn:active {
+            transform: scale(0.98);
+        }
+
+        .topic-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.2);
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .topic-btn h3 {
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+            color: var(--dark-color);
+        }
+
+        .topic-btn p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+
+        .quit-btn {
+            background: transparent;
+            border: 1px solid var(--text-light);
+            color: var(--text-light);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+            align-self: flex-start;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .quit-btn:hover {
+            background: var(--wrong-red);
+            color: white;
+            border-color: var(--wrong-red);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; 
+        }
+
+        .option-btn {
+            padding: 20px;
+            border: 2px solid transparent;
+            background: var(--white);
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-dark);
+            text-align: left;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            line-height: 1.4;
+        }
+
+        .option-btn:active {
+            transform: scale(0.99);
+        }
+
+        .option-btn:hover:not(.disabled) {
+            background: var(--light-bg);
+            border-color: var(--primary-color);
+        }
+
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: var(--correct-green);
+            color: #155724;
+        }
+
+        .option-btn.wrong {
+            background: #f8d7da;
+            border-color: var(--wrong-red);
+            color: #721c24;
+        }
+
+        .option-btn.disabled {
+            cursor: default;
+            opacity: 0.7;
+        }
+
+        .feedback-area {
+            margin-top: 30px;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        .feedback-text {
+            font-weight: 700;
+            font-size: 1.2rem;
+            min-height: 1.5em;
+        }
+
+        .next-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+            transition: transform 0.2s;
+            display: none; 
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .next-btn:active {
+            transform: scale(0.95);
+        }
+
+        .results-content {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            background: var(--white);
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 6px solid var(--primary-color);
+        }
+
+        .score-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--dark-color);
+        }
+
+        .score-label {
+            font-size: 1rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .home-btn {
+            background: var(--dark-color);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .home-btn:active {
+            transform: scale(0.98);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 0; align-items: flex-start; }
+            .app-container { height: 100vh; max-width: 100%; border-radius: 0; border: none; background: #fff; }
+            header { padding: 15px 20px; }
+            .view { padding: 20px; }
+            .menu-grid { grid-template-columns: 1fr; }
+            .option-btn { padding: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header>
+        <div id="header-title">Optics Quiz</div>
+        <div class="live-stats" id="live-stats">
+            Score: <span id="current-score">0</span> / <span id="total-qs">50</span>
+        </div>
+    </header>
+
+    <div class="view active" id="menu-view">
+        <h2 style="margin-bottom: 10px; color: var(--dark-color);">Select a Module</h2>
+        <p style="color: var(--text-light); margin-bottom: 20px;">Review questions based on University Physics (Young & Freedman).</p>
+        <div class="menu-grid" id="menu-grid">
+            <!-- Topics inserted by JS -->
+        </div>
+    </div>
+
+    <div class="view" id="quiz-view">
+        <button class="quit-btn" onclick="goHome()">← Exit to Menu</button>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="question-text" id="question-text">
+            Loading question...
+        </div>
+        <div class="options-list" id="options-list">
+            <!-- Options inserted by JS -->
+        </div>
+        <div class="feedback-area">
+            <div class="feedback-text" id="feedback-text"></div>
+            <button class="next-btn" id="next-btn">Next Question ➔</button>
+        </div>
+    </div>
+
+    <div class="view" id="results-view">
+        <div class="results-content">
+            <h2 style="color: var(--dark-color); margin-bottom: 20px;">Review Complete!</h2>
+            <div class="score-circle">
+                <div class="score-number" id="final-score">45</div>
+                <div class="score-label">Points</div>
+            </div>
+            <p id="result-message" style="margin-bottom: 30px; font-size: 1.1rem; color: var(--text-light);"></p>
+            <button class="home-btn" onclick="goHome()">Back to Modules</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- OPTICS DATA ---
+    const quizTopics = [
+        {
+            id: 'chapter33',
+            title: 'I. Nature of Light (Ch 33)',
+            desc: 'Reflection, Refraction, Dispersion, Polarization, Scattering.',
+            questions: [
+                { q: "Which model best explains the interference and diffraction of light?", o: ["Particle model", "Ray model", "Wave model", "Quantum model"], a: 2 },
+                { q: "In the particle model, light consists of discrete packets of energy called:", o: ["Electrons", "Protons", "Photons", "Phonons"], a: 2 },
+                { q: "The speed of light in a vacuum is approximately:", o: ["3.00 × 10<sup>6</sup> m/s", "3.00 × 10<sup>8</sup> m/s", "3.00 × 10<sup>10</sup> m/s", "343 m/s"], a: 1 },
+                { q: "According to the relationship E = hf, if the frequency of light increases, the energy of a photon:", o: ["Increases", "Decreases", "Remains the same", "Becomes zero"], a: 0 },
+                { q: "When light travels from a vacuum into a material (n > 1), which property remains constant?", o: ["Wavelength", "Speed", "Frequency", "Amplitude"], a: 2 },
+                { q: "The index of refraction is defined as:", o: ["n = v/c", "n = c/v", "n = &lambda;f", "n = c&lambda;"], a: 1 },
+                { q: "A light ray reflects off a smooth surface. If the angle of incidence is 40&deg; from the normal, the angle of reflection is:", o: ["50&deg;", "40&deg;", "90&deg;", "20&deg;"], a: 1 },
+                { q: "Light travels from air (n=1.0) to water (n=1.33). The light will bend:", o: ["Away from the normal", "Toward the normal", "Not at all", "Backwards"], a: 1 },
+                { q: "If the wavelength of light in a vacuum is &lambda;<sub>0</sub>, its wavelength in a medium with index n is:", o: ["n&lambda;<sub>0</sub>", "&lambda;<sub>0</sub> / n", "&lambda;<sub>0</sub>", "&lambda;<sub>0</sub> / n<sup>2</sup>"], a: 1 },
+                { q: "Snell's Law is expressed as:", o: ["n<sub>a</sub> cos &theta;<sub>a</sub> = n<sub>b</sub> cos &theta;<sub>b</sub>", "n<sub>a</sub> sin &theta;<sub>b</sub> = n<sub>b</sub> sin &theta;<sub>a</sub>", "n<sub>a</sub> sin &theta;<sub>a</sub> = n<sub>b</sub> sin &theta;<sub>b</sub>", "sin &theta;<sub>a</sub> / n<sub>a</sub> = sin &theta;<sub>b</sub> / n<sub>b</sub>"], a: 2 },
+                { q: "Total Internal Reflection (TIR) can only occur when light travels from:", o: ["A lower index medium to a higher index medium", "A higher index medium to a lower index medium", "Vacuum to glass", "Air to water"], a: 1 },
+                { q: "The critical angle &theta;<sub>crit</sub> is the angle of incidence where the angle of refraction is:", o: ["0&deg;", "45&deg;", "90&deg;", "180&deg;"], a: 2 },
+                { q: "The formula for the critical angle is:", o: ["sin &theta;<sub>crit</sub> = n<sub>a</sub> / n<sub>b</sub>", "sin &theta;<sub>crit</sub> = n<sub>b</sub> / n<sub>a</sub> (where n<sub>a</sub> > n<sub>b</sub>)", "cos &theta;<sub>crit</sub> = n<sub>b</sub> / n<sub>a</sub>", "tan &theta;<sub>crit</sub> = n<sub>a</sub> / n<sub>b</sub>"], a: 1 },
+                { q: "Optical fibers work on the principle of:", o: ["Dispersion", "Polarization", "Total Internal Reflection", "Diffraction"], a: 2 },
+                { q: "Dispersion is defined as the dependence of wave speed and index of refraction on:", o: ["Amplitude", "Polarization", "Wavelength", "Intensity"], a: 2 },
+                { q: "When white light passes through a prism, which color bends the most?", o: ["Red", "Green", "Yellow", "Violet"], a: 3 },
+                { q: "Why does a rainbow form?", o: ["Reflection only", "Refraction and Dispersion in water droplets", "Interference of sunlight", "Diffraction by clouds"], a: 1 },
+                { q: "Light is a transverse wave because:", o: ["It can be polarized", "It travels in a vacuum", "It has mass", "It diffracts"], a: 0 },
+                { q: "Malus's Law calculates:", o: ["The speed of polarized light", "The critical angle", "The intensity of transmitted polarized light", "The frequency shift"], a: 2 },
+                { q: "If the angle between the polarizer and analyzer is 90&deg;, the transmitted intensity is:", o: ["I<sub>max</sub>", "0.5 I<sub>max</sub>", "0", "0.25 I<sub>max</sub>"], a: 2 },
+                { q: "Brewster's angle is the angle of incidence where reflected light is:", o: ["Unpolarized", "100% polarized perpendicular to the plane of incidence", "100% polarized parallel to the plane of incidence", "Circularly polarized"], a: 1 },
+                { q: "The formula for Brewster's angle is:", o: ["sin &theta;<sub>p</sub> = n<sub>b</sub>/n<sub>a</sub>", "tan &theta;<sub>p</sub> = n<sub>b</sub>/n<sub>a</sub>", "cos &theta;<sub>p</sub> = n<sub>a</sub>/n<sub>b</sub>", "tan &theta;<sub>p</sub> = n<sub>a</sub>/n<sub>b</sub>"], a: 1 },
+                { q: "Rayleigh scattering intensity is proportional to:", o: ["&lambda;", "1/&lambda;", "1/&lambda;<sup>2</sup>", "1/&lambda;<sup>4</sup>"], a: 3 },
+                { q: "The sky appears blue because:", o: ["Air molecules are blue", "Short wavelengths (blue) are scattered more than long wavelengths", "Long wavelengths are scattered more", "The sun emits only blue light"], a: 1 },
+                { q: "Sunsets appear red because:", o: ["The sun cools down at night", "Blue light is scattered away, leaving longer wavelengths (red) to reach the eye", "Red light is scattered more than blue", "The atmosphere acts as a prism"], a: 1 },
+                { q: "Huygens's Principle states that:", o: ["Light travels in straight lines only", "Every point on a wavefront acts as a source of secondary spherical wavelets", "Light is a particle", "The angle of incidence equals the angle of reflection"], a: 1 },
+                { q: "Huygens's principle can be used to derive:", o: ["Snell's Law", "The Law of Reflection", "Both A and B", "Neither A nor B"], a: 2 },
+                { q: "Fiber optic cables transmit data using light. Which core parameter must be maximized to keep light inside?", o: ["Diameter", "Absorption", "Difference in refractive index between core and cladding", "Length"], a: 2 },
+                { q: "To reduce glare from a lake surface, you should use sunglasses with axis:", o: ["Horizontal", "Vertical", "Diagonal", "Random"], a: 1 }
+            ]
+        },
+        {
+            id: 'chapter34',
+            title: 'II. Geometric Optics (Ch 34)',
+            desc: 'Mirrors, Lenses, Eyes, Microscopes, Telescopes.',
+            questions: [
+                { q: "An image formed by a plane mirror is always:", o: ["Real and inverted", "Virtual, upright, and same size", "Real and magnified", "Virtual and smaller"], a: 1 },
+                { q: "For a plane mirror, if the object distance is s, the image distance s' is:", o: ["s' = s", "s' = -s", "s' = 2s", "s' = s/2"], a: 1 },
+                { q: "An image is 'virtual' if:", o: ["Light rays actually pass through the image point", "Light rays only appear to diverge from the image point", "It can be projected on a screen", "It is inverted"], a: 1 },
+                { q: "The focal length f of a spherical mirror with radius R is:", o: ["R", "2R", "R/2", "R<sup>2</sup>"], a: 2 },
+                { q: "A concave mirror has a radius of curvature R = 20 cm. Its focal length is:", o: ["+10 cm", "-10 cm", "+20 cm", "+40 cm"], a: 0 },
+                { q: "The mirror equation is:", o: ["1/s + 1/s' = 1/f", "1/s - 1/s' = 1/f", "s + s' = f", "ss' = f"], a: 0 },
+                { q: "Magnification m is defined as:", o: ["-s/s'", "-s'/s", "s'/s", "s/s'"], a: 1 },
+                { q: "If magnification m = -2, the image is:", o: ["Upright and smaller", "Inverted and larger", "Upright and larger", "Inverted and smaller"], a: 1 },
+                { q: "Convex mirrors always form images that are:", o: ["Real and enlarged", "Real and reduced", "Virtual, upright, and reduced", "Virtual, inverted, and enlarged"], a: 2 },
+                { q: "For refraction at a spherical surface, the sign of R is positive when:", o: ["The center of curvature is on the object side", "The center of curvature is on the outgoing (image) side", "The surface is flat", "The object is virtual"], a: 1 },
+                { q: "The formula for refraction at a spherical surface is:", o: ["1/s + 1/s' = 1/f", "n<sub>a</sub>/s + n<sub>b</sub>/s' = (n<sub>b</sub> - n<sub>a</sub>)/R", "n<sub>a</sub>/s - n<sub>b</sub>/s' = 1/R", "s/n<sub>a</sub> + s'/n<sub>b</sub> = R"], a: 1 },
+                { q: "When light enters a convex glass surface from air, the rays:", o: ["Diverge", "Converge", "Travel parallel", "Reflect back"], a: 1 },
+                { q: "A converging lens is:", o: ["Thinner in the middle than the edges", "Thicker in the middle than the edges", "Flat on both sides", "Always made of plastic"], a: 1 },
+                { q: "A diverging lens has a focal length that is:", o: ["Positive", "Negative", "Zero", "Infinite"], a: 1 },
+                { q: "The Lensmaker's Equation relates focal length to:", o: ["Object distance", "Image distance", "Index of refraction and radii of curvature", "Magnification"], a: 2 },
+                { q: "For a converging lens, if the object is placed inside the focal point (s < f), the image is:", o: ["Real and inverted", "Virtual, upright, and magnified", "Real and reduced", "Virtual and reduced"], a: 1 },
+                { q: "For a converging lens, if the object is at 2f, the image is at:", o: ["f", "2f", "Infinity", "The lens surface"], a: 1 },
+                { q: "Which of the following creates a virtual, upright, and reduced image for any real object position?", o: ["Converging lens", "Concave mirror", "Diverging lens", "Plane mirror"], a: 2 },
+                { q: "If two thin lenses with focal lengths f<sub>1</sub> and f<sub>2</sub> are in contact, the equivalent focal length F is:", o: ["F = f<sub>1</sub> + f<sub>2</sub>", "1/F = 1/f<sub>1</sub> + 1/f<sub>2</sub>", "F = f<sub>1</sub> f<sub>2</sub>", "F = f<sub>1</sub> - f<sub>2</sub>"], a: 1 },
+                { q: "The 'f-number' of a camera lens is defined as:", o: ["f/D (focal length divided by diameter)", "D/f", "f × D", "1/f"], a: 0 },
+                { q: "To increase the exposure of a photo, you should:", o: ["Increase the f-number", "Decrease the f-number (open aperture)", "Decrease the exposure time", "Use a darker lens"], a: 1 },
+                { q: "In the human eye, the image formed on the retina is:", o: ["Virtual and upright", "Real and inverted", "Real and upright", "Virtual and inverted"], a: 1 },
+                { q: "Myopia (nearsightedness) is corrected using a:", o: ["Converging lens", "Diverging lens", "Cylindrical lens", "Bifocal lens"], a: 1 },
+                { q: "Hyperopia (farsightedness) means the eye focuses light:", o: ["In front of the retina", "Behind the retina", "On the retina perfectly", "In the cornea"], a: 1 },
+                { q: "The 'near point' of a normal eye is approximately:", o: ["10 cm", "25 cm", "1 m", "Infinity"], a: 1 },
+                { q: "A simple magnifier uses a single:", o: ["Diverging lens", "Converging lens", "Concave mirror", "Prism"], a: 1 },
+                { q: "The angular magnification M of a magnifier with focal length f (in cm) is roughly:", o: ["25/f", "f/25", "1 + f", "25f"], a: 0 },
+                { q: "In a compound microscope, the objective lens forms a:", o: ["Virtual image", "Real, enlarged image", "Real, reduced image", "Virtual, reduced image"], a: 1 },
+                { q: "The eyepiece of a microscope acts as a:", o: ["Projector", "Simple magnifier", "Camera sensor", "Diverging lens"], a: 1 },
+                { q: "The total magnification of a microscope is the product of:", o: ["The diameters of the lenses", "The focal lengths", "The lateral magnification of the objective and the angular magnification of the eyepiece", "The object distance and image distance"], a: 2 },
+                { q: "In a refracting telescope, the objective lens has a:", o: ["Very short focal length", "Very long focal length", "Negative focal length", "Small diameter"], a: 1 },
+                { q: "The angular magnification of a telescope is given by:", o: ["M = -f<sub>obj</sub> / f<sub>eye</sub>", "M = -f<sub>eye</sub> / f<sub>obj</sub>", "M = f<sub>obj</sub> × f<sub>eye</sub>", "M = f<sub>obj</sub> + f<sub>eye</sub>"], a: 0 },
+                { q: "Why are large telescopes usually reflectors (mirrors) rather than refractors (lenses)?", o: ["Mirrors are lighter and do not suffer from chromatic aberration", "Lenses are stronger", "Mirrors refract light better", "Lenses cannot focus light"], a: 0 },
+                { q: "Which of the following creates a 'real' image?", o: ["Plane mirror", "Concave lens", "Projector lens", "Convex mirror"], a: 2 },
+                { q: "An 'upright' image has a magnification m that is:", o: ["Positive", "Negative", "Greater than 1", "Less than 1"], a: 0 },
+                { q: "A 'diopter' is a unit of:", o: ["Focal length", "Lens power (1/f)", "Magnification", "Aperture"], a: 1 },
+                { q: "Blue light focuses slightly closer to the lens than red light. This defect is called:", o: ["Spherical aberration", "Chromatic aberration", "Astigmatism", "Coma"], a: 1 }
+            ]
+        },
+        {
+            id: 'chapter35',
+            title: 'III. Interference (Ch 35)',
+            desc: 'Young\'s Slits, Thin Films, Michelson Interferometer.',
+            questions: [
+                { q: "'Monochromatic' light means the light has:", o: ["Single frequency/wavelength", "Multiple colors", "Varying amplitude", "Random phase"], a: 0 },
+                { q: "'Coherent' sources must maintain a constant:", o: ["Amplitude", "Phase relationship", "Intensity", "Speed"], a: 1 },
+                { q: "Constructive interference occurs when the phase difference is:", o: ["&pi;, 3&pi;, 5&pi;...", "0, 2&pi;, 4&pi;...", "&pi;/2", "Random"], a: 1 },
+                { q: "Destructive interference corresponds to a path difference of:", o: ["m &lambda;", "(m + 1/2) &lambda;", "2 m &lambda;", "&lambda; / 4"], a: 1 },
+                { q: "In Young's double-slit experiment, bright fringes appear when d sin &theta; equals:", o: ["(m + 1/2)&lambda;", "m &lambda;", "m &lambda; / d", "2&lambda;"], a: 1 },
+                { q: "The distance between adjacent bright fringes (&Delta;y) on a screen is given by:", o: ["R &lambda; / d", "d &lambda; / R", "R d / &lambda;", "&lambda; / (Rd)"], a: 0 },
+                { q: "If the distance between the slits (d) increases, the fringes on the screen will:", o: ["Get closer together", "Spread further apart", "Disappear", "Change color"], a: 0 },
+                { q: "If the wavelength of light increases (e.g., blue to red), the fringe spacing:", o: ["Decreases", "Increases", "Stays the same", "Becomes zero"], a: 1 },
+                { q: "The central fringe (m=0) in a double-slit experiment is:", o: ["A dark fringe", "A bright fringe", "A missing fringe", "Colored blue"], a: 1 },
+                { q: "The path difference &Delta;r to the first dark fringe is:", o: ["0", "&lambda;", "&lambda;/2", "2&lambda;"], a: 2 },
+                { q: "The maximum intensity in a double-slit pattern is I<sub>0</sub>. If one slit is covered, the intensity becomes:", o: ["I<sub>0</sub> / 2", "I<sub>0</sub> / 4", "I<sub>0</sub>", "0"], a: 1 },
+                { q: "Intensity I at a point depends on phase difference &phi; as:", o: ["I = I<sub>0</sub> sin<sup>2</sup>(&phi;/2)", "I = I<sub>0</sub> cos<sup>2</sup>(&phi;/2)", "I = I<sub>0</sub> cos(&phi;)", "I = I<sub>0</sub>/2"], a: 1 },
+                { q: "The phase difference &phi; is related to path difference &Delta;r by:", o: ["&phi; = (2&pi; / &lambda;) &Delta;r", "&phi; = (&lambda; / 2&pi;) &Delta;r", "&phi; = &lambda; &Delta;r", "&phi; = &pi; &Delta;r"], a: 0 },
+                { q: "In terms of phase, destructive interference occurs at &phi; =", o: ["0 rad", "2&pi; rad", "&pi; rad", "4&pi; rad"], a: 2 },
+                { q: "When light reflects from a medium with a higher index of refraction (e.g., Air to Glass), the phase shift is:", o: ["0", "&pi; (180&deg; or &lambda;/2)", "&pi;/2 (90&deg;)", "2&pi;"], a: 1 },
+                { q: "When light reflects from a medium with a lower index of refraction (e.g., Glass to Air), the phase shift is:", o: ["0", "&pi;", "&pi;/2", "3&pi;"], a: 0 },
+                { q: "For a thin film of thickness t and index n in air, the condition for constructive interference (reflection) with ONE phase shift is:", o: ["2t = m&lambda;/n", "2t = (m+1/2)&lambda;/n", "t = m&lambda;", "2t = m&lambda;"], a: 1 },
+                { q: "Why do soap bubbles look black just before they pop?", o: ["The film is too thick", "The film is extremely thin (t << &lambda;), causing destructive interference due to the phase shift", "The index of refraction becomes zero", "The light is absorbed"], a: 1 },
+                { q: "Non-reflective coatings on lenses are designed to produce:", o: ["Constructive interference in reflection", "Destructive interference in reflection", "Total internal reflection", "Dispersion"], a: 1 },
+                { q: "For a non-reflective coating (1 phase shift setup), the minimum thickness is:", o: ["&lambda; / 2n", "&lambda; / 4n", "&lambda; / n", "2&lambda; / n"], a: 1 },
+                { q: "The 'wavelength in the film' is denoted as:", o: ["&lambda;<sub>n</sub> = n &lambda;<sub>0</sub>", "&lambda;<sub>n</sub> = &lambda;<sub>0</sub> / n", "&lambda;<sub>n</sub> = &lambda;<sub>0</sub>", "&lambda;<sub>n</sub> = n<sup>2</sup> &lambda;<sub>0</sub>"], a: 1 },
+                { q: "Newton's Rings are an example of interference caused by:", o: ["A variable thickness air gap between a lens and a flat plate", "Double slits", "Diffraction gratings", "Polarization"], a: 0 },
+                { q: "In Newton's Rings, the center spot is dark because:", o: ["There is no light", "There is a phase shift of &pi; upon reflection at the air-glass boundary", "The glass absorbs the light", "The lens touches the plate"], a: 1 },
+                { q: "If oil (n=1.45) floats on water (n=1.33), how many phase shifts occur for reflected light?", o: ["0", "1 (at air-oil interface)", "2 (at air-oil and oil-water)", "3"], a: 1 },
+                { q: "If a thin film has index n<sub>film</sub> between n<sub>1</sub> and n<sub>2</sub>, and n<sub>1</sub> < n<sub>film</sub> < n<sub>2</sub>, how many phase shifts occur?", o: ["0", "1", "2", "Variable"], a: 2 },
+                { q: "A Michelson interferometer uses which component to split the beam?", o: ["Prism", "Beam splitter (half-silvered mirror)", "Double slit", "Diffraction grating"], a: 1 },
+                { q: "In a Michelson interferometer, interference occurs between:", o: ["Two different light sources", "A source and its reflection", "Light traveling two distinct paths (arms) and recombining", "Sound and light waves"], a: 2 },
+                { q: "If the movable mirror M<sub>2</sub> is shifted by distance &Delta;x, the path difference changes by:", o: ["&Delta;x", "2 &Delta;x", "&Delta;x / 2", "&Delta;x<sup>2</sup>"], a: 1 },
+                { q: "Moving the mirror by &lambda;/2 causes the fringe pattern to shift by:", o: ["1 fringe", "1/2 fringe", "2 fringes", "0 fringes"], a: 0 },
+                { q: "This device is primarily used to measure:", o: ["Speed of light", "Very small distances or wavelengths", "Frequency of sound", "Polarization angles"], a: 1 },
+                { q: "Michelson-Morley experiment famously failed to detect:", o: ["Gravitational waves", "The ether", "Photons", "Interference"], a: 1 },
+                { q: "Diffraction limits the resolution of optical instruments. This is related to the:", o: ["Wave nature of light", "Particle nature of light", "Reflection of light", "Refraction of light"], a: 0 },
+                { q: "Holography relies on:", o: ["Reflection only", "Interference and Diffraction", "Refraction only", "Dispersion"], a: 1 },
+                { q: "If you perform Young's Double Slit experiment underwater, the fringes will:", o: ["Get closer together", "Move further apart", "Disappear", "Become brighter"], a: 0 }
+            ]
+        }
+    ];
+
+    // --- STATE VARIABLES ---
+    let currentTopicIndex = -1;
+    let currentQuestionIndex = 0;
+    let currentScore = 0;
+    let hasAnswered = false;
+
+    // --- DOM ELEMENTS ---
+    const menuView = document.getElementById('menu-view');
+    const quizView = document.getElementById('quiz-view');
+    const resultsView = document.getElementById('results-view');
+    const menuGrid = document.getElementById('menu-grid');
+    const headerTitle = document.getElementById('header-title');
+    const liveStats = document.getElementById('live-stats');
+    
+    // Quiz Elements
+    const questionText = document.getElementById('question-text');
+    const optionsList = document.getElementById('options-list');
+    const feedbackText = document.getElementById('feedback-text');
+    const nextBtn = document.getElementById('next-btn');
+    const progressFill = document.getElementById('progress-fill');
+    const currentScoreEl = document.getElementById('current-score');
+    const totalQsEl = document.getElementById('total-qs');
+
+    // --- INITIALIZATION ---
+    function initMenu() {
+        menuGrid.innerHTML = '';
+        quizTopics.forEach((topic, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'topic-btn';
+            btn.innerHTML = `<h3>${topic.title}</h3><p>${topic.desc}</p>`;
+            btn.onclick = () => startQuiz(index);
+            menuGrid.appendChild(btn);
+        });
+    }
+
+    // --- NAVIGATION FUNCTIONS ---
+    function switchView(viewId) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+        // Scroll back to top when switching views on mobile
+        document.querySelector('.app-container').scrollTop = 0;
+    }
+
+    function startQuiz(index) {
+        currentTopicIndex = index;
+        currentQuestionIndex = 0;
+        currentScore = 0;
+        hasAnswered = false;
+        
+        // Update Header
+        headerTitle.innerText = quizTopics[index].title;
+        liveStats.style.display = 'block';
+        totalQsEl.innerText = quizTopics[index].questions.length;
+        currentScoreEl.innerText = 0;
+
+        switchView('quiz-view');
+        loadQuestion();
+    }
+
+    function goHome() {
+        headerTitle.innerText = "Optics Quiz";
+        liveStats.style.display = 'none';
+        switchView('menu-view');
+    }
+
+    // --- QUIZ LOGIC ---
+    function loadQuestion() {
+        hasAnswered = false;
+        const topic = quizTopics[currentTopicIndex];
+        const qData = topic.questions[currentQuestionIndex];
+
+        // Reset UI
+        feedbackText.innerText = '';
+        nextBtn.style.display = 'none';
+        // Render text with HTML for subscripts/superscripts
+        questionText.innerHTML = `${currentQuestionIndex + 1}. ${qData.q}`;
+        optionsList.innerHTML = '';
+        
+        // Update Progress
+        const progress = ((currentQuestionIndex) / topic.questions.length) * 100;
+        progressFill.style.width = `${progress}%`;
+
+        // Create Options
+        qData.o.forEach((option, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = option; // InnerHTML required for math symbols in options
+            btn.onclick = () => handleAnswer(i, btn);
+            optionsList.appendChild(btn);
+        });
+    }
+
+    function handleAnswer(selectedIndex, btnElement) {
+        if (hasAnswered) return;
+        hasAnswered = true;
+
+        const topic = quizTopics[currentTopicIndex];
+        const qData = topic.questions[currentQuestionIndex];
+        const options = document.querySelectorAll('.option-btn');
+
+        if (selectedIndex === qData.a) {
+            // Correct
+            btnElement.classList.add('correct');
+            feedbackText.innerHTML = '<span style="color:var(--correct-green)">Correct!</span>';
+            currentScore++;
+            currentScoreEl.innerText = currentScore;
+        } else {
+            // Wrong
+            btnElement.classList.add('wrong');
+            // Highlight correct one
+            options[qData.a].classList.add('correct');
+            feedbackText.innerHTML = '<span style="color:var(--wrong-red)">Incorrect!</span>';
+        }
+
+        // Disable all options
+        options.forEach(opt => opt.classList.add('disabled'));
+        nextBtn.style.display = 'block';
+        
+        // Auto scroll to bottom
+        setTimeout(() => {
+            const container = document.querySelector('.app-container');
+            container.scrollTo({
+                top: container.scrollHeight,
+                behavior: 'smooth'
+            });
+        }, 100);
+    }
+
+    function nextQuestion() {
+        const topic = quizTopics[currentTopicIndex];
+        
+        if (currentQuestionIndex < topic.questions.length - 1) {
+            currentQuestionIndex++;
+            loadQuestion();
+            document.querySelector('.app-container').scrollTop = 0;
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        const topic = quizTopics[currentTopicIndex];
+        document.getElementById('final-score').innerText = currentScore;
+        
+        const percentage = (currentScore / topic.questions.length) * 100;
+        let msg = "";
+        if (percentage >= 90) msg = "Outstanding! You are an Optics Master.";
+        else if (percentage >= 70) msg = "Great job! You know your concepts.";
+        else if (percentage >= 50) msg = "Good effort. Keep reviewing formulas!";
+        else msg = "Time to review the chapters again.";
+        
+        document.getElementById('result-message').innerText = msg;
+        switchView('results-view');
+    }
+
+    // --- EVENT LISTENERS ---
+    nextBtn.onclick = nextQuestion;
+
+    // Laptop/PC Enter Key Support
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            if (quizView.classList.contains('active') && hasAnswered) {
+                nextQuestion();
+            }
+        }
+    });
+
+    // Start
+    initMenu();
+    switchView('menu-view');
+
+</script>
+
+</body>
+</html>
