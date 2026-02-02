@@ -2,23 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Optics Ultimate Reviewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Physics: Relativity Lesson 1 Reviewer</title>
     <style>
         :root {
-            /* Physics Blue Theme */
-            --primary-color: #3498db;      /* Bright Blue */
-            --dark-color: #2c3e50;         /* Dark Blue/Grey */
-            --accent-color: #8e44ad;       /* Indigo/Purple for light/wave vibes */
-            --light-bg: #f0f8ff;           /* Alice Blue */
-            --white: #ffffff;
-            --glass-bg: rgba(255, 255, 255, 0.95);
-            --glass-border: rgba(255, 255, 255, 0.5);
-            --text-dark: #2c3e50;
-            --text-light: #7f8c8d;
-            --wrong-red: #e74c3c;
-            --correct-green: #27ae60;
-            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            /* Modern Green/White Theme Variables */
+            --primary: #2ecc71;
+            --dark-primary: #27ae60;
+            --bg-gradient-1: #e0f7fa;
+            --bg-gradient-2: #e8f5e9;
+            --glass-bg: rgba(255, 255, 255, 0.92);
+            --glass-border: rgba(255, 255, 255, 0.7);
+            --text-main: #2d3436;
+            --text-secondary: #636e72;
+            --correct-bg: #d4edda;
+            --correct-text: #155724;
+            --wrong-bg: #f8d7da;
+            --wrong-text: #721c24;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
         * {
@@ -26,673 +27,555 @@
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            /* Gradient reminiscent of a spectrum or sky */
-            background: linear-gradient(135deg, #E0EAFC 0%, #CFDEF3 100%);
+            background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: var(--text-dark);
             padding: 20px;
+            color: var(--text-main);
         }
 
-        .app-container {
+        .container {
             background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 24px;
             border: 1px solid var(--glass-border);
             box-shadow: var(--shadow);
             width: 100%;
-            max-width: 800px;
-            height: 85vh; 
-            overflow-y: auto; 
-            position: relative;
+            max-width: 900px;
+            min-height: 600px;
             display: flex;
             flex-direction: column;
-            -webkit-overflow-scrolling: touch; 
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
-        .app-container::-webkit-scrollbar {
-            width: 8px;
-        }
-        .app-container::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.05);
-        }
-        .app-container::-webkit-scrollbar-thumb {
-            background: rgba(0,0,0,0.1);
-            border-radius: 4px;
-        }
-
+        /* HEADER */
         header {
-            padding: 20px 30px;
-            background: rgba(255, 255, 255, 0.9);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 25px 35px;
+            background: rgba(255,255,255,0.7);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            backdrop-filter: blur(5px);
         }
 
         h1 {
             font-size: 1.5rem;
-            color: var(--dark-color);
-            font-weight: 700;
-        }
-
-        .live-stats {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-light);
-            display: none; 
-        }
-
-        .live-stats span {
-            color: var(--primary-color);
+            color: var(--dark-primary);
             font-weight: 800;
+            letter-spacing: -0.5px;
         }
 
+        .stats-badge {
+            background: var(--primary);
+            color: white;
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+            display: none; /* Hidden on menu */
+        }
+
+        /* VIEWS (Menu, Quiz, Results) */
         .view {
-            padding: 30px;
             flex: 1;
+            padding: 40px;
             display: none;
-            flex-direction: column;
-            padding-bottom: 50px; 
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+            overflow-y: auto;
         }
 
         .view.active {
             display: flex;
-            animation: fadeIn 0.4s ease forwards;
+            flex-direction: column;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            to { opacity: 1; }
         }
 
-        .menu-grid {
+        /* MENU GRID */
+        .menu-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .menu-title {
+            margin-bottom: 10px;
+            font-size: 2rem;
+            color: var(--text-main);
+        }
+
+        .menu-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-            gap: 15px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            width: 100%;
         }
 
-        .topic-btn {
-            background: var(--white);
-            border: none;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        .card {
+            background: #fff;
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 20px;
+            padding: 30px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: left;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative;
             overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
         }
 
-        .topic-btn:active {
-            transform: scale(0.98);
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(46, 204, 113, 0.2);
+            border-color: var(--primary);
         }
 
-        .topic-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.2);
-            border-left: 5px solid var(--primary-color);
+        .card::after {
+            content: '➜';
+            position: absolute;
+            right: 25px;
+            bottom: 25px;
+            font-size: 1.5rem;
+            color: var(--primary);
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s;
         }
 
-        .topic-btn h3 {
-            font-size: 1.15rem;
-            margin-bottom: 8px;
-            color: var(--dark-color);
+        .card:hover::after {
+            opacity: 1;
+            transform: translateX(0);
         }
 
-        .topic-btn p {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            line-height: 1.4;
+        .card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+            color: var(--text-main);
         }
 
-        .quit-btn {
-            background: transparent;
-            border: 1px solid var(--text-light);
-            color: var(--text-light);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            margin-bottom: 20px;
-            transition: all 0.2s;
-            align-self: flex-start;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .quit-btn:hover {
-            background: var(--wrong-red);
-            color: white;
-            border-color: var(--wrong-red);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #eee;
-            border-radius: 4px;
-            margin-bottom: 25px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--primary-color);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .question-text {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 25px;
+        .card p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
             line-height: 1.5;
         }
 
-        .options-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px; 
+        /* QUIZ UI */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #edf2f7;
+            border-radius: 4px;
+            margin-bottom: 35px;
+            overflow: hidden;
         }
 
-        .option-btn {
-            padding: 20px;
-            border: 2px solid transparent;
-            background: var(--white);
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 1rem;
-            color: var(--text-dark);
-            text-align: left;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            line-height: 1.4;
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.4s ease;
         }
 
-        .option-btn:active {
-            transform: scale(0.99);
+        .question-box {
+            font-size: 1.4rem;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 35px;
+            color: var(--text-main);
         }
 
-        .option-btn:hover:not(.disabled) {
-            background: var(--light-bg);
-            border-color: var(--primary-color);
-        }
-
-        .option-btn.correct {
-            background: #d4edda;
-            border-color: var(--correct-green);
-            color: #155724;
-        }
-
-        .option-btn.wrong {
-            background: #f8d7da;
-            border-color: var(--wrong-red);
-            color: #721c24;
-        }
-
-        .option-btn.disabled {
-            cursor: default;
-            opacity: 0.7;
-        }
-
-        .feedback-area {
-            margin-top: 30px;
-            min-height: 80px;
-            display: flex;
-            flex-direction: column;
+        .options-grid {
+            display: grid;
             gap: 15px;
-            align-items: center;
-            text-align: center;
-            padding-bottom: 20px;
         }
 
-        .feedback-text {
+        .option {
+            background: #fff;
+            border: 2px solid #f1f3f5;
+            padding: 20px 25px;
+            border-radius: 16px;
+            font-size: 1.05rem;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            position: relative;
+        }
+
+        .option:hover:not(.disabled) {
+            border-color: var(--primary);
+            background: #fcfdfd;
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: var(--correct-bg);
+            border-color: #28a745;
+            color: var(--correct-text);
+        }
+
+        .option.wrong {
+            background: var(--wrong-bg);
+            border-color: #dc3545;
+            color: var(--wrong-text);
+        }
+
+        .option.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: auto;
+            padding-top: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 60px;
+        }
+
+        .feedback {
             font-weight: 700;
             font-size: 1.2rem;
-            min-height: 1.5em;
         }
 
-        .next-btn {
-            background: var(--primary-color);
+        .btn {
+            background: var(--primary);
             color: white;
             border: none;
-            padding: 15px 40px;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
-            transition: transform 0.2s;
-            display: none; 
-            width: 100%;
-            max-width: 300px;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+            transition: all 0.2s;
+            display: none; /* Hidden until answer */
         }
 
-        .next-btn:active {
-            transform: scale(0.95);
+        .btn:hover {
+            transform: translateY(-2px);
+            background: var(--dark-primary);
+            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.5);
         }
 
-        .results-content {
+        /* RESULTS UI */
+        .results-container {
             text-align: center;
-            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
         }
 
         .score-circle {
-            width: 160px;
-            height: 160px;
-            background: var(--white);
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
-            margin: 0 auto 30px;
+            background: #fff;
+            border: 8px solid var(--primary);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border: 6px solid var(--primary-color);
+            margin-bottom: 35px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .score-number {
-            font-size: 3.5rem;
+        @keyframes popIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .score-val {
+            font-size: 4rem;
             font-weight: 800;
-            color: var(--dark-color);
+            color: var(--primary);
+            line-height: 1;
         }
 
         .score-label {
-            font-size: 1rem;
-            color: var(--text-light);
+            font-size: 1.1rem;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
+            color: var(--text-secondary);
+            margin-top: 5px;
         }
 
         .home-btn {
-            background: var(--dark-color);
-            color: white;
-            border: none;
-            padding: 18px 50px;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            margin-top: 20px;
-            width: 100%;
-            max-width: 300px;
+            display: inline-block;
+            background: var(--text-main);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .home-btn:active {
-            transform: scale(0.98);
+        .home-btn:hover {
+            background: #000;
         }
 
+        /* RESPONSIVE */
         @media (max-width: 768px) {
-            body { padding: 0; align-items: flex-start; }
-            .app-container { height: 100vh; max-width: 100%; border-radius: 0; border: none; background: #fff; }
-            header { padding: 15px 20px; }
-            .view { padding: 20px; }
-            .menu-grid { grid-template-columns: 1fr; }
-            .option-btn { padding: 18px; }
+            .container {
+                height: 100vh;
+                border-radius: 0;
+                border: none;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .question-box {
+                font-size: 1.2rem;
+            }
+            h1 { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="app-container">
+<div class="container">
     <header>
-        <div id="header-title">Optics Quiz</div>
-        <div class="live-stats" id="live-stats">
-            Score: <span id="current-score">0</span> / <span id="total-qs">50</span>
-        </div>
+        <div id="app-title"><h1>Relativity Reviewer</h1></div>
+        <div id="live-score" class="stats-badge">Score: 0</div>
     </header>
 
-    <div class="view active" id="menu-view">
-        <h2 style="margin-bottom: 10px; color: var(--dark-color);">Select a Module</h2>
-        <p style="color: var(--text-light); margin-bottom: 20px;">Review questions based on University Physics (Young & Freedman).</p>
-        <div class="menu-grid" id="menu-grid">
-            <!-- Topics inserted by JS -->
+    <!-- MENU VIEW -->
+    <div id="menu-view" class="view active">
+        <div class="menu-header">
+            <h2 class="menu-title">Select a Module</h2>
+            <p class="menu-subtitle">Comprehensive review based on Lesson 1.</p>
+        </div>
+        <div class="grid" id="topic-grid">
+            <!-- Dynamically populated via JS -->
         </div>
     </div>
 
-    <div class="view" id="quiz-view">
-        <button class="quit-btn" onclick="goHome()">← Exit to Menu</button>
-        
-        <div class="progress-bar">
-            <div class="progress-fill" id="progress-fill"></div>
+    <!-- QUIZ VIEW -->
+    <div id="quiz-view" class="view">
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
         </div>
-        <div class="question-text" id="question-text">
-            Loading question...
+        <div id="question-text" class="question-box">Loading...</div>
+        <div id="options-container" class="options-grid">
+            <!-- Dynamically populated via JS -->
         </div>
-        <div class="options-list" id="options-list">
-            <!-- Options inserted by JS -->
-        </div>
-        <div class="feedback-area">
-            <div class="feedback-text" id="feedback-text"></div>
-            <button class="next-btn" id="next-btn">Next Question ➔</button>
+        <div class="footer">
+            <div id="feedback" class="feedback"></div>
+            <button id="next-btn" class="btn">Next Question ➜</button>
         </div>
     </div>
 
-    <div class="view" id="results-view">
-        <div class="results-content">
-            <h2 style="color: var(--dark-color); margin-bottom: 20px;">Review Complete!</h2>
+    <!-- RESULTS VIEW -->
+    <div id="results-view" class="view">
+        <div class="results-container">
+            <h2 style="margin-bottom: 20px; font-size: 2rem; color: var(--dark-primary);">Quiz Complete!</h2>
             <div class="score-circle">
-                <div class="score-number" id="final-score">45</div>
-                <div class="score-label">Points</div>
+                <span id="final-score" class="score-val">0</span>
+                <span class="score-label">Points</span>
             </div>
-            <p id="result-message" style="margin-bottom: 30px; font-size: 1.1rem; color: var(--text-light);"></p>
-            <button class="home-btn" onclick="goHome()">Back to Modules</button>
+            <p id="result-msg" style="margin-bottom: 30px; font-size: 1.2rem; color: var(--text-secondary);">Good job!</p>
+            <button class="btn home-btn" onclick="goHome()" style="display:inline-block">Return to Menu</button>
         </div>
     </div>
 </div>
 
 <script>
-    // --- OPTICS DATA ---
-    const quizTopics = [
+    // --- QUIZ DATA EXTRACTED FROM FILE ---
+    const quizData = [
         {
-            id: 'chapter33',
-            title: 'I. Nature of Light (Ch 33)',
-            desc: 'Reflection, Refraction, Dispersion, Polarization, Scattering.',
+            id: 'history',
+            title: 'I. History & Experiments',
+            desc: 'Galilean Relativity, Maxwell, Michelson-Morley, Einstein, and Postulates.',
             questions: [
-                { q: "Which model best explains the interference and diffraction of light?", o: ["Particle model", "Ray model", "Wave model", "Quantum model"], a: 2 },
-                { q: "In the particle model, light consists of discrete packets of energy called:", o: ["Electrons", "Protons", "Photons", "Phonons"], a: 2 },
-                { q: "The speed of light in a vacuum is approximately:", o: ["3.00 × 10<sup>6</sup> m/s", "3.00 × 10<sup>8</sup> m/s", "3.00 × 10<sup>10</sup> m/s", "343 m/s"], a: 1 },
-                { q: "According to the relationship E = hf, if the frequency of light increases, the energy of a photon:", o: ["Increases", "Decreases", "Remains the same", "Becomes zero"], a: 0 },
-                { q: "When light travels from a vacuum into a material (n > 1), which property remains constant?", o: ["Wavelength", "Speed", "Frequency", "Amplitude"], a: 2 },
-                { q: "The index of refraction is defined as:", o: ["n = v/c", "n = c/v", "n = &lambda;f", "n = c&lambda;"], a: 1 },
-                { q: "A light ray reflects off a smooth surface. If the angle of incidence is 40&deg; from the normal, the angle of reflection is:", o: ["50&deg;", "40&deg;", "90&deg;", "20&deg;"], a: 1 },
-                { q: "Light travels from air (n=1.0) to water (n=1.33). The light will bend:", o: ["Away from the normal", "Toward the normal", "Not at all", "Backwards"], a: 1 },
-                { q: "If the wavelength of light in a vacuum is &lambda;<sub>0</sub>, its wavelength in a medium with index n is:", o: ["n&lambda;<sub>0</sub>", "&lambda;<sub>0</sub> / n", "&lambda;<sub>0</sub>", "&lambda;<sub>0</sub> / n<sup>2</sup>"], a: 1 },
-                { q: "Snell's Law is expressed as:", o: ["n<sub>a</sub> cos &theta;<sub>a</sub> = n<sub>b</sub> cos &theta;<sub>b</sub>", "n<sub>a</sub> sin &theta;<sub>b</sub> = n<sub>b</sub> sin &theta;<sub>a</sub>", "n<sub>a</sub> sin &theta;<sub>a</sub> = n<sub>b</sub> sin &theta;<sub>b</sub>", "sin &theta;<sub>a</sub> / n<sub>a</sub> = sin &theta;<sub>b</sub> / n<sub>b</sub>"], a: 2 },
-                { q: "Total Internal Reflection (TIR) can only occur when light travels from:", o: ["A lower index medium to a higher index medium", "A higher index medium to a lower index medium", "Vacuum to glass", "Air to water"], a: 1 },
-                { q: "The critical angle &theta;<sub>crit</sub> is the angle of incidence where the angle of refraction is:", o: ["0&deg;", "45&deg;", "90&deg;", "180&deg;"], a: 2 },
-                { q: "The formula for the critical angle is:", o: ["sin &theta;<sub>crit</sub> = n<sub>a</sub> / n<sub>b</sub>", "sin &theta;<sub>crit</sub> = n<sub>b</sub> / n<sub>a</sub> (where n<sub>a</sub> > n<sub>b</sub>)", "cos &theta;<sub>crit</sub> = n<sub>b</sub> / n<sub>a</sub>", "tan &theta;<sub>crit</sub> = n<sub>a</sub> / n<sub>b</sub>"], a: 1 },
-                { q: "Optical fibers work on the principle of:", o: ["Dispersion", "Polarization", "Total Internal Reflection", "Diffraction"], a: 2 },
-                { q: "Dispersion is defined as the dependence of wave speed and index of refraction on:", o: ["Amplitude", "Polarization", "Wavelength", "Intensity"], a: 2 },
-                { q: "When white light passes through a prism, which color bends the most?", o: ["Red", "Green", "Yellow", "Violet"], a: 3 },
-                { q: "Why does a rainbow form?", o: ["Reflection only", "Refraction and Dispersion in water droplets", "Interference of sunlight", "Diffraction by clouds"], a: 1 },
-                { q: "Light is a transverse wave because:", o: ["It can be polarized", "It travels in a vacuum", "It has mass", "It diffracts"], a: 0 },
-                { q: "Malus's Law calculates:", o: ["The speed of polarized light", "The critical angle", "The intensity of transmitted polarized light", "The frequency shift"], a: 2 },
-                { q: "If the angle between the polarizer and analyzer is 90&deg;, the transmitted intensity is:", o: ["I<sub>max</sub>", "0.5 I<sub>max</sub>", "0", "0.25 I<sub>max</sub>"], a: 2 },
-                { q: "Brewster's angle is the angle of incidence where reflected light is:", o: ["Unpolarized", "100% polarized perpendicular to the plane of incidence", "100% polarized parallel to the plane of incidence", "Circularly polarized"], a: 1 },
-                { q: "The formula for Brewster's angle is:", o: ["sin &theta;<sub>p</sub> = n<sub>b</sub>/n<sub>a</sub>", "tan &theta;<sub>p</sub> = n<sub>b</sub>/n<sub>a</sub>", "cos &theta;<sub>p</sub> = n<sub>a</sub>/n<sub>b</sub>", "tan &theta;<sub>p</sub> = n<sub>a</sub>/n<sub>b</sub>"], a: 1 },
-                { q: "Rayleigh scattering intensity is proportional to:", o: ["&lambda;", "1/&lambda;", "1/&lambda;<sup>2</sup>", "1/&lambda;<sup>4</sup>"], a: 3 },
-                { q: "The sky appears blue because:", o: ["Air molecules are blue", "Short wavelengths (blue) are scattered more than long wavelengths", "Long wavelengths are scattered more", "The sun emits only blue light"], a: 1 },
-                { q: "Sunsets appear red because:", o: ["The sun cools down at night", "Blue light is scattered away, leaving longer wavelengths (red) to reach the eye", "Red light is scattered more than blue", "The atmosphere acts as a prism"], a: 1 },
-                { q: "Huygens's Principle states that:", o: ["Light travels in straight lines only", "Every point on a wavefront acts as a source of secondary spherical wavelets", "Light is a particle", "The angle of incidence equals the angle of reflection"], a: 1 },
-                { q: "Huygens's principle can be used to derive:", o: ["Snell's Law", "The Law of Reflection", "Both A and B", "Neither A nor B"], a: 2 },
-                { q: "Fiber optic cables transmit data using light. Which core parameter must be maximized to keep light inside?", o: ["Diameter", "Absorption", "Difference in refractive index between core and cladding", "Length"], a: 2 },
-                { q: "To reduce glare from a lake surface, you should use sunglasses with axis:", o: ["Horizontal", "Vertical", "Diagonal", "Random"], a: 1 }
+                { q: "According to the Principle of Galilean Relativity, which of the following is true?", o: ["The laws of mechanics are identical in all inertial frames.", "The speed of light is constant in all frames.", "Time is relative to the observer's motion.", "Energy and mass are interchangeable."], a: 0 },
+                { q: "What conflict did James Clerk Maxwell’s 1860s equations create with Galilean physics?", o: ["They proved that gravity travels faster than light.", "They showed that the speed of light (c) is a constant, contradicting Galilean velocity addition.", "They suggested that the ether does not exist.", "They proved that mass increases with velocity."], a: 1 },
+                { q: "What was the specific purpose of the Michelson & Morley Interferometer Experiment (1887)?", o: ["To measure the speed of the earth through the 'Luminiferous Ether'.", "To measure the exact speed of light in a vacuum.", "To test the curvature of spacetime.", "To synchronize atomic clocks across the globe."], a: 0 },
+                { q: "How did Hendrik Lorentz explain the null result of the Michelson-Morley experiment before Einstein's theory?", o: ["He stated that the speed of light varies with direction.", "He proposed mathematical transformations suggesting objects 'contract,' though he still believed in the ether.", "He concluded that the ether does not exist.", "He developed the concept of spacetime curvature."], a: 1 },
+                { q: "Which of the following are the two Postulates of Special Relativity (1905)?", o: ["1. Gravity is a force; 2. Light bends around massive objects.", "1. Laws of physics are invariant; 2. c is constant for all observers.", "1. Time is absolute; 2. Length is relative.", "1. Energy is conserved; 2. Momentum is relative."], a: 1 },
+                { q: "Arthur Eddington's 1919 Solar Eclipse Expedition provided proof for General Relativity by measuring what?", o: ["The time dilation of satellites.", "The bending of starlight by the sun (mass curves spacetime).", "The contraction of the sun's diameter.", "The speed of solar wind."], a: 1 },
+                { q: "The Hafele & Keating Experiment (1971) confirmed Einstein’s predictions by flying four cesium atomic clocks around the world. What did they find?", o: ["The clocks remained perfectly synchronized with Earth-based clocks.", "The time difference matched predictions for both Special and General Relativity.", "The clocks stopped working due to high velocity.", "Gravity had no effect on the time recorded."], a: 1 }
             ]
         },
         {
-            id: 'chapter34',
-            title: 'II. Geometric Optics (Ch 34)',
-            desc: 'Mirrors, Lenses, Eyes, Microscopes, Telescopes.',
+            id: 'concepts',
+            title: 'II. Knowledge & Terminology',
+            desc: 'Inertial Frames, Simultaneity, Time Dilation, Length Contraction, Lorentz Factor.',
             questions: [
-                { q: "An image formed by a plane mirror is always:", o: ["Real and inverted", "Virtual, upright, and same size", "Real and magnified", "Virtual and smaller"], a: 1 },
-                { q: "For a plane mirror, if the object distance is s, the image distance s' is:", o: ["s' = s", "s' = -s", "s' = 2s", "s' = s/2"], a: 1 },
-                { q: "An image is 'virtual' if:", o: ["Light rays actually pass through the image point", "Light rays only appear to diverge from the image point", "It can be projected on a screen", "It is inverted"], a: 1 },
-                { q: "The focal length f of a spherical mirror with radius R is:", o: ["R", "2R", "R/2", "R<sup>2</sup>"], a: 2 },
-                { q: "A concave mirror has a radius of curvature R = 20 cm. Its focal length is:", o: ["+10 cm", "-10 cm", "+20 cm", "+40 cm"], a: 0 },
-                { q: "The mirror equation is:", o: ["1/s + 1/s' = 1/f", "1/s - 1/s' = 1/f", "s + s' = f", "ss' = f"], a: 0 },
-                { q: "Magnification m is defined as:", o: ["-s/s'", "-s'/s", "s'/s", "s/s'"], a: 1 },
-                { q: "If magnification m = -2, the image is:", o: ["Upright and smaller", "Inverted and larger", "Upright and larger", "Inverted and smaller"], a: 1 },
-                { q: "Convex mirrors always form images that are:", o: ["Real and enlarged", "Real and reduced", "Virtual, upright, and reduced", "Virtual, inverted, and enlarged"], a: 2 },
-                { q: "For refraction at a spherical surface, the sign of R is positive when:", o: ["The center of curvature is on the object side", "The center of curvature is on the outgoing (image) side", "The surface is flat", "The object is virtual"], a: 1 },
-                { q: "The formula for refraction at a spherical surface is:", o: ["1/s + 1/s' = 1/f", "n<sub>a</sub>/s + n<sub>b</sub>/s' = (n<sub>b</sub> - n<sub>a</sub>)/R", "n<sub>a</sub>/s - n<sub>b</sub>/s' = 1/R", "s/n<sub>a</sub> + s'/n<sub>b</sub> = R"], a: 1 },
-                { q: "When light enters a convex glass surface from air, the rays:", o: ["Diverge", "Converge", "Travel parallel", "Reflect back"], a: 1 },
-                { q: "A converging lens is:", o: ["Thinner in the middle than the edges", "Thicker in the middle than the edges", "Flat on both sides", "Always made of plastic"], a: 1 },
-                { q: "A diverging lens has a focal length that is:", o: ["Positive", "Negative", "Zero", "Infinite"], a: 1 },
-                { q: "The Lensmaker's Equation relates focal length to:", o: ["Object distance", "Image distance", "Index of refraction and radii of curvature", "Magnification"], a: 2 },
-                { q: "For a converging lens, if the object is placed inside the focal point (s < f), the image is:", o: ["Real and inverted", "Virtual, upright, and magnified", "Real and reduced", "Virtual and reduced"], a: 1 },
-                { q: "For a converging lens, if the object is at 2f, the image is at:", o: ["f", "2f", "Infinity", "The lens surface"], a: 1 },
-                { q: "Which of the following creates a virtual, upright, and reduced image for any real object position?", o: ["Converging lens", "Concave mirror", "Diverging lens", "Plane mirror"], a: 2 },
-                { q: "If two thin lenses with focal lengths f<sub>1</sub> and f<sub>2</sub> are in contact, the equivalent focal length F is:", o: ["F = f<sub>1</sub> + f<sub>2</sub>", "1/F = 1/f<sub>1</sub> + 1/f<sub>2</sub>", "F = f<sub>1</sub> f<sub>2</sub>", "F = f<sub>1</sub> - f<sub>2</sub>"], a: 1 },
-                { q: "The 'f-number' of a camera lens is defined as:", o: ["f/D (focal length divided by diameter)", "D/f", "f × D", "1/f"], a: 0 },
-                { q: "To increase the exposure of a photo, you should:", o: ["Increase the f-number", "Decrease the f-number (open aperture)", "Decrease the exposure time", "Use a darker lens"], a: 1 },
-                { q: "In the human eye, the image formed on the retina is:", o: ["Virtual and upright", "Real and inverted", "Real and upright", "Virtual and inverted"], a: 1 },
-                { q: "Myopia (nearsightedness) is corrected using a:", o: ["Converging lens", "Diverging lens", "Cylindrical lens", "Bifocal lens"], a: 1 },
-                { q: "Hyperopia (farsightedness) means the eye focuses light:", o: ["In front of the retina", "Behind the retina", "On the retina perfectly", "In the cornea"], a: 1 },
-                { q: "The 'near point' of a normal eye is approximately:", o: ["10 cm", "25 cm", "1 m", "Infinity"], a: 1 },
-                { q: "A simple magnifier uses a single:", o: ["Diverging lens", "Converging lens", "Concave mirror", "Prism"], a: 1 },
-                { q: "The angular magnification M of a magnifier with focal length f (in cm) is roughly:", o: ["25/f", "f/25", "1 + f", "25f"], a: 0 },
-                { q: "In a compound microscope, the objective lens forms a:", o: ["Virtual image", "Real, enlarged image", "Real, reduced image", "Virtual, reduced image"], a: 1 },
-                { q: "The eyepiece of a microscope acts as a:", o: ["Projector", "Simple magnifier", "Camera sensor", "Diverging lens"], a: 1 },
-                { q: "The total magnification of a microscope is the product of:", o: ["The diameters of the lenses", "The focal lengths", "The lateral magnification of the objective and the angular magnification of the eyepiece", "The object distance and image distance"], a: 2 },
-                { q: "In a refracting telescope, the objective lens has a:", o: ["Very short focal length", "Very long focal length", "Negative focal length", "Small diameter"], a: 1 },
-                { q: "The angular magnification of a telescope is given by:", o: ["M = -f<sub>obj</sub> / f<sub>eye</sub>", "M = -f<sub>eye</sub> / f<sub>obj</sub>", "M = f<sub>obj</sub> × f<sub>eye</sub>", "M = f<sub>obj</sub> + f<sub>eye</sub>"], a: 0 },
-                { q: "Why are large telescopes usually reflectors (mirrors) rather than refractors (lenses)?", o: ["Mirrors are lighter and do not suffer from chromatic aberration", "Lenses are stronger", "Mirrors refract light better", "Lenses cannot focus light"], a: 0 },
-                { q: "Which of the following creates a 'real' image?", o: ["Plane mirror", "Concave lens", "Projector lens", "Convex mirror"], a: 2 },
-                { q: "An 'upright' image has a magnification m that is:", o: ["Positive", "Negative", "Greater than 1", "Less than 1"], a: 0 },
-                { q: "A 'diopter' is a unit of:", o: ["Focal length", "Lens power (1/f)", "Magnification", "Aperture"], a: 1 },
-                { q: "Blue light focuses slightly closer to the lens than red light. This defect is called:", o: ["Spherical aberration", "Chromatic aberration", "Astigmatism", "Coma"], a: 1 }
+                { q: "An 'Inertial Frame' is defined as a reference frame where:", o: ["Objects accelerate without force.", "Newton’s 1st Law holds (an object stays at rest or in constant motion unless acted upon).", "The speed of light varies.", "Gravity is the only acting force."], a: 1 },
+                { q: "In the context of relativity, what is 'Invariance'?", o: ["The quality of a physical law remaining the same regardless of the observer’s state of motion.", "The variation of time depending on speed.", "The constant nature of the ether.", "The conservation of proper length."], a: 0 },
+                { q: " 'Relativity of Simultaneity' means that:", o: ["Events happening at the same time are always simultaneous for everyone.", "Two events simultaneous for one observer might not be simultaneous for another.", "Time stops at the speed of light.", "Simultaneous events must occur at the same location."], a: 1 },
+                { q: "Which observer measures 'Proper Time'?", o: ["The observer moving at c.", "The observer who sees the events occur at the same point in space.", "The observer who sees the events occur at different points in space.", "The stationary observer relative to the ether."], a: 1 },
+                { q: "Based on the Time Dilation formula, how does a moving clock behave compared to a stationary one?", o: ["It ticks faster.", "It ticks at the same rate.", "It ticks slower (time 'stretches').", "It stops completely."], a: 2 },
+                { q: " 'Proper Length' is the length measured by:", o: ["An observer moving parallel to the object.", "An observer at rest relative to the object.", "An observer moving perpendicular to the object.", "An observer accelerating away from the object."], a: 1 },
+                { q: "What is the mathematical definition of the Lorentz Factor (γ)?", o: ["v / c", "1 / v", "1 / √(1 - v²/c²)", "mc²"], a: 2 },
+                { q: "As velocity approaches c, what happens to Relativistic Momentum?", o: ["It approaches infinity.", "It approaches zero.", "It becomes constant.", "It decreases linearly."], a: 0 }
             ]
         },
         {
-            id: 'chapter35',
-            title: 'III. Interference (Ch 35)',
-            desc: 'Young\'s Slits, Thin Films, Michelson Interferometer.',
+            id: 'paradoxes',
+            title: 'III. Paradoxes & Analysis',
+            desc: 'Twin Paradox, Pole-in-Barn, Bug-Rivet, Ehrenfest, and Deep Analysis.',
             questions: [
-                { q: "'Monochromatic' light means the light has:", o: ["Single frequency/wavelength", "Multiple colors", "Varying amplitude", "Random phase"], a: 0 },
-                { q: "'Coherent' sources must maintain a constant:", o: ["Amplitude", "Phase relationship", "Intensity", "Speed"], a: 1 },
-                { q: "Constructive interference occurs when the phase difference is:", o: ["&pi;, 3&pi;, 5&pi;...", "0, 2&pi;, 4&pi;...", "&pi;/2", "Random"], a: 1 },
-                { q: "Destructive interference corresponds to a path difference of:", o: ["m &lambda;", "(m + 1/2) &lambda;", "2 m &lambda;", "&lambda; / 4"], a: 1 },
-                { q: "In Young's double-slit experiment, bright fringes appear when d sin &theta; equals:", o: ["(m + 1/2)&lambda;", "m &lambda;", "m &lambda; / d", "2&lambda;"], a: 1 },
-                { q: "The distance between adjacent bright fringes (&Delta;y) on a screen is given by:", o: ["R &lambda; / d", "d &lambda; / R", "R d / &lambda;", "&lambda; / (Rd)"], a: 0 },
-                { q: "If the distance between the slits (d) increases, the fringes on the screen will:", o: ["Get closer together", "Spread further apart", "Disappear", "Change color"], a: 0 },
-                { q: "If the wavelength of light increases (e.g., blue to red), the fringe spacing:", o: ["Decreases", "Increases", "Stays the same", "Becomes zero"], a: 1 },
-                { q: "The central fringe (m=0) in a double-slit experiment is:", o: ["A dark fringe", "A bright fringe", "A missing fringe", "Colored blue"], a: 1 },
-                { q: "The path difference &Delta;r to the first dark fringe is:", o: ["0", "&lambda;", "&lambda;/2", "2&lambda;"], a: 2 },
-                { q: "The maximum intensity in a double-slit pattern is I<sub>0</sub>. If one slit is covered, the intensity becomes:", o: ["I<sub>0</sub> / 2", "I<sub>0</sub> / 4", "I<sub>0</sub>", "0"], a: 1 },
-                { q: "Intensity I at a point depends on phase difference &phi; as:", o: ["I = I<sub>0</sub> sin<sup>2</sup>(&phi;/2)", "I = I<sub>0</sub> cos<sup>2</sup>(&phi;/2)", "I = I<sub>0</sub> cos(&phi;)", "I = I<sub>0</sub>/2"], a: 1 },
-                { q: "The phase difference &phi; is related to path difference &Delta;r by:", o: ["&phi; = (2&pi; / &lambda;) &Delta;r", "&phi; = (&lambda; / 2&pi;) &Delta;r", "&phi; = &lambda; &Delta;r", "&phi; = &pi; &Delta;r"], a: 0 },
-                { q: "In terms of phase, destructive interference occurs at &phi; =", o: ["0 rad", "2&pi; rad", "&pi; rad", "4&pi; rad"], a: 2 },
-                { q: "When light reflects from a medium with a higher index of refraction (e.g., Air to Glass), the phase shift is:", o: ["0", "&pi; (180&deg; or &lambda;/2)", "&pi;/2 (90&deg;)", "2&pi;"], a: 1 },
-                { q: "When light reflects from a medium with a lower index of refraction (e.g., Glass to Air), the phase shift is:", o: ["0", "&pi;", "&pi;/2", "3&pi;"], a: 0 },
-                { q: "For a thin film of thickness t and index n in air, the condition for constructive interference (reflection) with ONE phase shift is:", o: ["2t = m&lambda;/n", "2t = (m+1/2)&lambda;/n", "t = m&lambda;", "2t = m&lambda;"], a: 1 },
-                { q: "Why do soap bubbles look black just before they pop?", o: ["The film is too thick", "The film is extremely thin (t << &lambda;), causing destructive interference due to the phase shift", "The index of refraction becomes zero", "The light is absorbed"], a: 1 },
-                { q: "Non-reflective coatings on lenses are designed to produce:", o: ["Constructive interference in reflection", "Destructive interference in reflection", "Total internal reflection", "Dispersion"], a: 1 },
-                { q: "For a non-reflective coating (1 phase shift setup), the minimum thickness is:", o: ["&lambda; / 2n", "&lambda; / 4n", "&lambda; / n", "2&lambda; / n"], a: 1 },
-                { q: "The 'wavelength in the film' is denoted as:", o: ["&lambda;<sub>n</sub> = n &lambda;<sub>0</sub>", "&lambda;<sub>n</sub> = &lambda;<sub>0</sub> / n", "&lambda;<sub>n</sub> = &lambda;<sub>0</sub>", "&lambda;<sub>n</sub> = n<sup>2</sup> &lambda;<sub>0</sub>"], a: 1 },
-                { q: "Newton's Rings are an example of interference caused by:", o: ["A variable thickness air gap between a lens and a flat plate", "Double slits", "Diffraction gratings", "Polarization"], a: 0 },
-                { q: "In Newton's Rings, the center spot is dark because:", o: ["There is no light", "There is a phase shift of &pi; upon reflection at the air-glass boundary", "The glass absorbs the light", "The lens touches the plate"], a: 1 },
-                { q: "If oil (n=1.45) floats on water (n=1.33), how many phase shifts occur for reflected light?", o: ["0", "1 (at air-oil interface)", "2 (at air-oil and oil-water)", "3"], a: 1 },
-                { q: "If a thin film has index n<sub>film</sub> between n<sub>1</sub> and n<sub>2</sub>, and n<sub>1</sub> < n<sub>film</sub> < n<sub>2</sub>, how many phase shifts occur?", o: ["0", "1", "2", "Variable"], a: 2 },
-                { q: "A Michelson interferometer uses which component to split the beam?", o: ["Prism", "Beam splitter (half-silvered mirror)", "Double slit", "Diffraction grating"], a: 1 },
-                { q: "In a Michelson interferometer, interference occurs between:", o: ["Two different light sources", "A source and its reflection", "Light traveling two distinct paths (arms) and recombining", "Sound and light waves"], a: 2 },
-                { q: "If the movable mirror M<sub>2</sub> is shifted by distance &Delta;x, the path difference changes by:", o: ["&Delta;x", "2 &Delta;x", "&Delta;x / 2", "&Delta;x<sup>2</sup>"], a: 1 },
-                { q: "Moving the mirror by &lambda;/2 causes the fringe pattern to shift by:", o: ["1 fringe", "1/2 fringe", "2 fringes", "0 fringes"], a: 0 },
-                { q: "This device is primarily used to measure:", o: ["Speed of light", "Very small distances or wavelengths", "Frequency of sound", "Polarization angles"], a: 1 },
-                { q: "Michelson-Morley experiment famously failed to detect:", o: ["Gravitational waves", "The ether", "Photons", "Interference"], a: 1 },
-                { q: "Diffraction limits the resolution of optical instruments. This is related to the:", o: ["Wave nature of light", "Particle nature of light", "Reflection of light", "Refraction of light"], a: 0 },
-                { q: "Holography relies on:", o: ["Reflection only", "Interference and Diffraction", "Refraction only", "Dispersion"], a: 1 },
-                { q: "If you perform Young's Double Slit experiment underwater, the fringes will:", o: ["Get closer together", "Move further apart", "Disappear", "Become brighter"], a: 0 }
+                { q: "The 'Twin Paradox' asks why the traveling twin is younger. What is the scientific resolution?", o: ["The traveling twin is an illusion.", "Asymmetry of Acceleration: The traveling twin must accelerate to turn back, breaking the symmetry.", "The earth twin is actually younger.", "Time runs backwards in space."], a: 1 },
+                { q: "In the 'Pole-in-the-Barn Paradox,' the conflict is that the pole fits in the barn's frame but not the pole's frame. How is this resolved?", o: ["The barn expands.", "Relativity of Simultaneity: The doors do not open and close at the same time in both frames.", "The pole shrinks permanently.", "The observer's vision is distorted."], a: 1 },
+                { q: "The 'Bug-Rivet Paradox' relies on the concept that:", o: ["Rivets become harder at high speeds.", "The 'stop' signal cannot travel faster than c, so the rivet squashes the bug before the tail stops.", "The hole becomes deeper due to length contraction.", "The bug moves out of the way."], a: 1 },
+                { q: "The 'Ehrenfest Paradox' (spinning disk) proved that rigid bodies cannot exist in relativity and led Einstein to conclude that:", o: ["Space is non-Euclidean (curved) in accelerating frames.", "c is a variable constant.", "Centrifugal force disproves relativity.", "Rotating objects do not experience time dilation."], a: 0 },
+                { q: "If you look in a mirror while traveling at c, do you see your reflection? Why?", o: ["No, light cannot catch up to the mirror.", "Yes, because your frame is inertial and light still moves at c relative to you.", "Yes, but the image is distorted.", "No, the mirror contracts to nothing."], a: 1 },
+                { q: "Why is infinite energy required to accelerate an object to the speed of light?", o: ["Because air resistance becomes infinite.", "Because the Lorentz factor goes to infinity as v approaches c.", "Because the object's mass disappears.", "Because the ether provides infinite resistance."], a: 1 },
+                { q: "Without relativistic corrections, how much would GPS accuracy drift in a single day?", o: ["A few centimeters.", "About 38 microseconds (kilometers of error).", "It would not drift at all.", "A few meters."], a: 1 }
+            ]
+        },
+        {
+            id: 'minkowski',
+            title: 'IV. Minkowski Diagrams',
+            desc: 'Spacetime Diagrams, Worldlines, Light Cones, and Advanced Paradox Review.',
+            questions: [
+                { q: "In a Minkowski Diagram, what does the vertical axis represent?", o: ["Space (x)", "Time (ct)", "Velocity (v)", "Gravity (g)"], a: 1 },
+                { q: "What is a 'Worldline'?", o: ["The path of an object through spacetime.", "The horizon of a black hole.", "The limit of the observable universe.", "The speed of light squared."], a: 0 },
+                { q: "A worldline that falls outside the 'Light Cone' is impossible because:", o: ["It represents a stationary object.", "It would require a velocity greater than c.", "It represents movement backward in time.", "It contradicts the gravity of Earth."], a: 1 },
+                { q: "The 'Hyperbola of Invariance' on a spacetime diagram represents which constant value?", o: ["The speed of light (c).", "The spacetime interval (s²).", "The proper length.", "The total energy."], a: 1 },
+                { q: "As an observer's velocity increases, how do their axes (ct' and x') change on the diagram?", o: ["They remain perpendicular.", "They 'tilt' toward each other at an angle where v/c.", "They rotate clockwise together.", "They become parallel to the horizontal axis."], a: 1 },
+                { q: "In the Minkowski explanation of the Twin Paradox, why is the straight worldline (Earth twin) associated with the older age?", o: ["Straight lines represent faster motion.", "In spacetime geometry, the straight line between two events is the longest proper time.", "The bent path represents negative time.", "The Earth twin stopped moving through time."], a: 1 },
+                { q: "In the Pole-in-the-Barn Paradox, what happens in the pole's frame of reference?", o: ["The pole shrinks to fit inside.", "The front door closes and opens before the back door even reaches the barn.", "Both doors close simultaneously.", "The barn moves slower than the pole."], a: 1 },
+                { q: "The 'Bug-Rivet Paradox' demonstrates that when the head of the rivet hits the hole, the tail:", o: ["Stops instantly.", "Continues to move for a split second because the 'stop' signal travels at the speed of sound.", "Reverses direction.", "Disintegrates into energy."], a: 1 },
+                { q: "The Ehrenfest Paradox led to the realization that space in accelerating frames is:", o: ["Infinite.", "Flat (Euclidean).", "Curved (Non-Euclidean).", "Zero-dimensional."], a: 2 }
             ]
         }
     ];
 
-    // --- STATE VARIABLES ---
-    let currentTopicIndex = -1;
-    let currentQuestionIndex = 0;
-    let currentScore = 0;
-    let hasAnswered = false;
+    // --- LOGIC ---
+    let currentTopic = null;
+    let questionIndex = 0;
+    let score = 0;
 
-    // --- DOM ELEMENTS ---
     const menuView = document.getElementById('menu-view');
     const quizView = document.getElementById('quiz-view');
     const resultsView = document.getElementById('results-view');
-    const menuGrid = document.getElementById('menu-grid');
-    const headerTitle = document.getElementById('header-title');
-    const liveStats = document.getElementById('live-stats');
+    const liveScoreBadge = document.getElementById('live-score');
     
-    // Quiz Elements
-    const questionText = document.getElementById('question-text');
-    const optionsList = document.getElementById('options-list');
-    const feedbackText = document.getElementById('feedback-text');
-    const nextBtn = document.getElementById('next-btn');
-    const progressFill = document.getElementById('progress-fill');
-    const currentScoreEl = document.getElementById('current-score');
-    const totalQsEl = document.getElementById('total-qs');
+    // Init Menu
+    const grid = document.getElementById('topic-grid');
+    quizData.forEach((topic, idx) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<h3>${topic.title}</h3><p>${topic.desc}</p>`;
+        card.onclick = () => startQuiz(idx);
+        grid.appendChild(card);
+    });
 
-    // --- INITIALIZATION ---
-    function initMenu() {
-        menuGrid.innerHTML = '';
-        quizTopics.forEach((topic, index) => {
-            const btn = document.createElement('button');
-            btn.className = 'topic-btn';
-            btn.innerHTML = `<h3>${topic.title}</h3><p>${topic.desc}</p>`;
-            btn.onclick = () => startQuiz(index);
-            menuGrid.appendChild(btn);
-        });
-    }
-
-    // --- NAVIGATION FUNCTIONS ---
-    function switchView(viewId) {
+    function showView(view) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
-        // Scroll back to top when switching views on mobile
-        document.querySelector('.app-container').scrollTop = 0;
+        view.classList.add('active');
     }
 
     function startQuiz(index) {
-        currentTopicIndex = index;
-        currentQuestionIndex = 0;
-        currentScore = 0;
-        hasAnswered = false;
-        
-        // Update Header
-        headerTitle.innerText = quizTopics[index].title;
-        liveStats.style.display = 'block';
-        totalQsEl.innerText = quizTopics[index].questions.length;
-        currentScoreEl.innerText = 0;
-
-        switchView('quiz-view');
+        currentTopic = quizData[index];
+        questionIndex = 0;
+        score = 0;
+        liveScoreBadge.style.display = 'block';
+        updateStats();
+        showView(quizView);
         loadQuestion();
     }
 
-    function goHome() {
-        headerTitle.innerText = "Optics Quiz";
-        liveStats.style.display = 'none';
-        switchView('menu-view');
+    function updateStats() {
+        liveScoreBadge.innerText = `Score: ${score} / ${currentTopic.questions.length}`;
     }
 
-    // --- QUIZ LOGIC ---
     function loadQuestion() {
-        hasAnswered = false;
-        const topic = quizTopics[currentTopicIndex];
-        const qData = topic.questions[currentQuestionIndex];
-
-        // Reset UI
-        feedbackText.innerText = '';
-        nextBtn.style.display = 'none';
-        // Render text with HTML for subscripts/superscripts
-        questionText.innerHTML = `${currentQuestionIndex + 1}. ${qData.q}`;
-        optionsList.innerHTML = '';
+        const qData = currentTopic.questions[questionIndex];
         
-        // Update Progress
-        const progress = ((currentQuestionIndex) / topic.questions.length) * 100;
-        progressFill.style.width = `${progress}%`;
+        // UI Reset
+        document.getElementById('feedback').innerText = '';
+        document.getElementById('next-btn').style.display = 'none';
+        
+        // Progress
+        const percent = ((questionIndex) / currentTopic.questions.length) * 100;
+        document.getElementById('progress-bar').style.width = `${percent}%`;
 
-        // Create Options
-        qData.o.forEach((option, i) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerHTML = option; // InnerHTML required for math symbols in options
-            btn.onclick = () => handleAnswer(i, btn);
-            optionsList.appendChild(btn);
+        // Text
+        document.getElementById('question-text').innerText = `${questionIndex + 1}. ${qData.q}`;
+
+        // Options
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        qData.o.forEach((optText, i) => {
+            const btn = document.createElement('div');
+            btn.className = 'option';
+            btn.innerText = optText;
+            btn.onclick = () => checkAnswer(i, btn, qData.a);
+            container.appendChild(btn);
         });
     }
 
-    function handleAnswer(selectedIndex, btnElement) {
-        if (hasAnswered) return;
-        hasAnswered = true;
+    function checkAnswer(selectedIndex, btn, correctIndex) {
+        const options = document.querySelectorAll('.option');
+        options.forEach(o => o.classList.add('disabled')); // Disable all interactions
 
-        const topic = quizTopics[currentTopicIndex];
-        const qData = topic.questions[currentQuestionIndex];
-        const options = document.querySelectorAll('.option-btn');
-
-        if (selectedIndex === qData.a) {
-            // Correct
-            btnElement.classList.add('correct');
-            feedbackText.innerHTML = '<span style="color:var(--correct-green)">Correct!</span>';
-            currentScore++;
-            currentScoreEl.innerText = currentScore;
+        if(selectedIndex === correctIndex) {
+            btn.classList.add('correct');
+            document.getElementById('feedback').innerHTML = '<span style="color:var(--correct-text)">Correct!</span>';
+            score++;
+            updateStats();
         } else {
-            // Wrong
-            btnElement.classList.add('wrong');
-            // Highlight correct one
-            options[qData.a].classList.add('correct');
-            feedbackText.innerHTML = '<span style="color:var(--wrong-red)">Incorrect!</span>';
+            btn.classList.add('wrong');
+            options[correctIndex].classList.add('correct'); // Highlight correct answer
+            document.getElementById('feedback').innerHTML = '<span style="color:var(--wrong-text)">Incorrect</span>';
         }
 
-        // Disable all options
-        options.forEach(opt => opt.classList.add('disabled'));
-        nextBtn.style.display = 'block';
-        
-        // Auto scroll to bottom
-        setTimeout(() => {
-            const container = document.querySelector('.app-container');
-            container.scrollTo({
-                top: container.scrollHeight,
-                behavior: 'smooth'
-            });
-        }, 100);
+        document.getElementById('next-btn').style.display = 'block';
     }
 
-    function nextQuestion() {
-        const topic = quizTopics[currentTopicIndex];
-        
-        if (currentQuestionIndex < topic.questions.length - 1) {
-            currentQuestionIndex++;
+    document.getElementById('next-btn').onclick = () => {
+        if(questionIndex < currentTopic.questions.length - 1) {
+            questionIndex++;
             loadQuestion();
-            document.querySelector('.app-container').scrollTop = 0;
         } else {
-            showResults();
+            finishQuiz();
         }
-    }
+    };
 
-    function showResults() {
-        const topic = quizTopics[currentTopicIndex];
-        document.getElementById('final-score').innerText = currentScore;
-        
-        const percentage = (currentScore / topic.questions.length) * 100;
-        let msg = "";
-        if (percentage >= 90) msg = "Outstanding! You are an Optics Master.";
-        else if (percentage >= 70) msg = "Great job! You know your concepts.";
-        else if (percentage >= 50) msg = "Good effort. Keep reviewing formulas!";
-        else msg = "Time to review the chapters again.";
-        
-        document.getElementById('result-message').innerText = msg;
-        switchView('results-view');
-    }
-
-    // --- EVENT LISTENERS ---
-    nextBtn.onclick = nextQuestion;
-
-    // Laptop/PC Enter Key Support
+    // Keyboard support for Laptop/PC
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            if (quizView.classList.contains('active') && hasAnswered) {
-                nextQuestion();
-            }
+        if(e.key === 'Enter' && quizView.classList.contains('active')) {
+            const nextBtn = document.getElementById('next-btn');
+            if(nextBtn.style.display !== 'none') nextBtn.click();
         }
     });
 
-    // Start
-    initMenu();
-    switchView('menu-view');
+    function finishQuiz() {
+        showView(resultsView);
+        document.getElementById('final-score').innerText = score;
+        document.getElementById('progress-bar').style.width = '100%';
+        
+        const percent = (score / currentTopic.questions.length) * 100;
+        let msg = "Keep studying!";
+        if(percent > 90) msg = "Physics Master!";
+        else if(percent > 70) msg = "Great understanding!";
+        else if(percent > 50) msg = "Good effort!";
+        document.getElementById('result-msg').innerText = msg;
+    }
 
+    function goHome() {
+        liveScoreBadge.style.display = 'none';
+        showView(menuView);
+    }
 </script>
 
 </body>
